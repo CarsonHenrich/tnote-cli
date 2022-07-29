@@ -1,8 +1,8 @@
 
 import click
 import sys
-#from tnote.classmodule import MyClass
-#from tnote.funcmodule import my_function
+from tnote.classmodule import MyClass
+from tnote.funcmodule import my_function
 
 
 @click.command()
@@ -10,11 +10,9 @@ import sys
 def main(name):
     print('passed argument :: {}'.format(name))
 
-    """
     my_function('hello world')
-    my_object = MyClass('Thomas')
+    my_object = MyClass(name)
     my_object.say_name()
-    """
 
 
 if __name__ == '__main__':
