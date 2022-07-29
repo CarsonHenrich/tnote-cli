@@ -1,16 +1,21 @@
+
+import click
 import sys
-from .classmodule import MyClass
-from .funcmodule import my_function
+#from tnote.classmodule import MyClass
+#from tnote.funcmodule import my_function
 
-def main():
-    args = sys.argv[1:]
-    print('count of args :: {}'.format(len(args)))
-    for arg in args:
-        print('passed argument :: {}'.format(arg))
 
+@click.command()
+@click.argument('name')
+def main(name):
+    print('passed argument :: {}'.format(name))
+
+    """
     my_function('hello world')
     my_object = MyClass('Thomas')
     my_object.say_name()
+    """
+
 
 if __name__ == '__main__':
     main()
