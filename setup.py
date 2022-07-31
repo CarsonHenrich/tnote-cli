@@ -4,7 +4,7 @@ from setuptools import setup
 
 VERSION = "v0.0.0"
 
-dependencies = ["click", ]
+dependencies = ["click", "rich"]
 
 
 this_directory = Path(__file__).parent
@@ -35,14 +35,15 @@ setup(
         'Natural Language :: English',
         'Topic :: Utilities',
     ],
+    #package_data=[('~/tnote-cli/notes/', ['notes/index.txt'])],
     install_requires=dependencies,
     setup_requires=['pytest-runner'],
     tests_require=['pytest==4.4.1'],
     test_suite='tests',
     entry_points={
         'console_scripts': [
-            'tn = tnote.__main__:main',
-            'tnote = tnote.__main__:main',
+            'tn = tnote.__main__:cli',
+            'tnote = tnote.__main__:cli',
         ],
     },
 )
