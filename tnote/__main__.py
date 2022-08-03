@@ -1,38 +1,50 @@
+
+import os
 import click
-import sys
-from classmodule import note
-from tnote.module import edit, delete, move, view, index, get_notes
+from tnote.note_module import Note
+from tnote.func_module import NOTESPATH, RECENT, index_check, print_index, get_index, recent_check
 
 
 @click.command()
-@click.argument("name", required=False)
+@click.argument("note_id", required=False)
 @click.option('--recent', '-r', is_flag=True, show_default=True, default=False, help='Opens most recent note')
 @click.option("--edit", "-e", 'action', flag_value='edit', show_default=True, default='edit')
-@click.option("--move", "-m", 'action', flag_value='move', show_default=True, default='edit')
 @click.option("--view", "-v", 'action', flag_value='view', show_default=True, default='edit')
-@click.option("--del", "-d", 'action', flag_value='del', show_default=True, default='edit')
-@click.option('--path', '-p', 'path', type=click.Path())
-def cli(name, action, path, recent):
-    if recent:
-        name = ".recent"
-    if name == None:
-        index()
+@click.option("--delete", "-d", 'action', flag_value='del', show_default=True, default='edit')
+@click.option('--rename', '-rn', 'rename')
+@click.option("--move", "-m", 'move', type=click.Path(readable=True, writable=True, dir_okay=False), help='allows you to move a note to the specified path')
+@click.option('--execute', '-x', count=True)
+@click.option('--path', '-p', 'to_path', type=click.Path(readable=True, writable=True, dir_okay=False), help='Specify the path to the note if not specified will go in the default notes folder')
+def cli(**k):
+    index = get_index()
+    if k['recent']:
+        k['note_id'] = recent_check(index)
+    if k['note_id'] == None:
+        print_index()
         return
-    match action:
+    path = index_check(index, k['note_id'], k['action']) or k['to_path']
+    path = path or os.path.join(NOTESPATH, k['note_id']+'.md')
+    note = Note(id=k['note_id'], path=path)
+    if k['move'] is not None:
+        note.move_note(k['move'])
+        return
+    if k['rename'] is not None:
+        note.rename_note(k['rename'])
+        return
+    if k['execute'] >= 1:
+        note.exe(False)
+        if k['execute'] >= 2:
+            note.exe(True)
+            return
+        return
+
+    match k['action']:
         case 'edit':
-            if path is None:
-                edit(name)
-            else:
-                edit(name, path)
+            note.edit_note()
         case 'del':
-            delete(name)
-        case 'move':
-            if path is None:
-                print('Error: Must use -p to provide a path that the file be moved to')
-            else:
-                move(name, path)
+            note.delete_note()
         case 'view':
-            view(name)
+            note.view_note()
 
 
 if __name__ == '__main__':

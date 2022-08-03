@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 from pathlib import Path
 from setuptools import setup
 
-VERSION = "v0.0.0"
+VERSION = "v0.0.5"
 
 dependencies = ["click", "rich"]
 
@@ -25,13 +25,14 @@ setup(
     },
     classifiers=[
         'Environment :: Console',
-        'Development Status :: 1 - Planning',
+        'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
         'Intended Audience :: System Administation',
         'Intended Audience :: IT',
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License ',
         'Operating System :: MacOS',
+        'Operating System :: POSIX',
         'Natural Language :: English',
         'Topic :: Utilities',
     ],
