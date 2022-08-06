@@ -32,10 +32,10 @@ def cli(**k):
         note.rename_note(k['rename'])
         return
     if k['execute'] >= 1:
-        note.exe(False)
         if k['execute'] >= 2:
             note.exe(True)
             return
+        note.exe(False)
         return
 
     match k['action']:

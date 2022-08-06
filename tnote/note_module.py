@@ -107,5 +107,5 @@ class Note:
 
     def exe(self, chmod=False):
         if chmod:
-            self.path.chmod(stat.S_IEXEC)
+            self.path.chmod(0o777)
         os.system(self.path)
