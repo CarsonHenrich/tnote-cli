@@ -1,13 +1,13 @@
 
 import os
-import stat
+from turtle import update
 import click
 import pathlib
 
 from rich.console import Console
 from rich.markdown import Markdown
 
-from tnote.func_module import EDITOR, RECENT, get_index, write_index, intialize_files
+from tnote.func_module import get_file, write_index, intialize_files, EDITOR, RECENT, GLOW, INDEXPATH
 
 
 class Note:
@@ -34,6 +34,7 @@ class Note:
             if not self.note_in_index():
                 # allow for the addition of notes created outside tnote
                 self.add_to_index()
+                self.update_recent()
             else:
                 return
         else:
@@ -43,17 +44,16 @@ class Note:
             self.update_recent()
 
     def note_in_index(self):
-        index = get_index()
+        index = get_file(INDEXPATH)
         return self.id in index.keys()
 
     def delete_from_index(self):
-        index = get_index()
+        index = get_file(INDEXPATH)
         index.pop(self.id)
         write_index(index)
 
     def add_to_index(self):
-        index = get_index()
-        path = self.path.__str__()
+        index = get_file(INDEXPATH)
         index[self.id] = {'name': self.name, 'path': self.path.__str__()}
         write_index(index)
 
@@ -87,9 +87,12 @@ class Note:
 
     def view_note(self):
         os.system('clear -x')
-        console = Console()
-        with open(self.path, 'r+') as note:
-            console.print(Markdown(note.read()))
+        if not GLOW:
+            console = Console()
+            with open(self.path, 'r+') as note:
+                console.print(Markdown(note.read()))
+        else:
+            os.system('glow {}'.format(self.path))
         self.update_recent()
 
     def edit_note(self):
@@ -97,7 +100,7 @@ class Note:
         self.update_recent()
 
     def update_recent(self):
-        index = get_index()
+        index = get_file(INDEXPATH)
         if self.path.exists():
             path = str(self.path)
             index[RECENT] = {'id': self.id, 'name': self.name, 'path': path}

@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 from pathlib import Path
 from setuptools import setup
 
-VERSION = "v0.0.5"
+VERSION = "v0.0.6"
 
 dependencies = ["click", "rich"]
 

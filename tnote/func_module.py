@@ -1,18 +1,59 @@
+
 import os
 import json
+CONFIGPATH = os.path.expanduser('~/.tnote.json')
 
 
-DATAPATH = os.path.expanduser('~/.tnote/')
-NOTESPATH = os.path.join(DATAPATH, "notes")
-CONFIGPATH = os.path.expanduser('~/.tnoterc')
-INDEXPATH = os.path.join(DATAPATH, "index.json")
-EDITOR = os.getenv("$EDITOR")
+def intialize_config():
+    if not os.path.exists(CONFIGPATH):
+        with open(CONFIGPATH, "w") as config:
+            config.write('\
+{\n\
+"DATAPATH": "",\n\
+"NOTESPATH": "",\n\
+"INDEXPATH": "",\n\
+"EDITOR": "",\n\
+"GLOW": false\n\
+}')
+
+
+def get_file(path, name=None):
+    if path == CONFIGPATH:
+        intialize_config()
+    else:
+        intialize_files()
+    dicti = {}
+    with open(path, 'r') as file:
+        dicti = json.load(file)
+        try:
+            return dicti[name]
+        except KeyError:
+            return dict(dicti)
+
+
+config = get_file(CONFIGPATH)
+DATAPATH = config['DATAPATH'] or os.path.expanduser('~/.tnote/')
+NOTESPATH = config['NOTESPATH'] or os.path.join(DATAPATH, "notes")
+INDEXPATH = config['INDEXPATH'] or os.path.join(DATAPATH, "index.json")
+EDITOR = config['EDITOR'] or os.getenv("$EDITOR")
 RECENT = '.recent'
+GLOW = config['GLOW'] or False
+
+
+def intialize_files():
+    intialize_config()
+    if not os.path.exists(DATAPATH):
+        os.mkdir(DATAPATH)
+    if not os.path.exists(NOTESPATH):
+        os.mkdir(NOTESPATH)
+    if not os.path.exists(INDEXPATH):
+        with open(INDEXPATH, 'w') as index:
+            index.write('{\n\n}')
 
 
 def print_index():
     intialize_files()
-    index_dict = get_index()
+    index_dict = get_file(INDEXPATH)
     print("\
 |-------------------------INDEX-------------------------|\n\
 \n")
@@ -38,30 +79,6 @@ def print_index():
 |-------------------------------------------------------|\n".format(key, index_dict[key]['name'], index_dict[key]['path']))
 
 
-def intialize_files():
-    if not os.path.exists(CONFIGPATH):
-        open(CONFIGPATH, "x")
-    if not os.path.exists(DATAPATH):
-        os.mkdir(DATAPATH)
-    if not os.path.exists(NOTESPATH):
-        os.mkdir(NOTESPATH)
-    if not os.path.exists(INDEXPATH):
-        index = open(INDEXPATH, 'w')
-        index.write('{\n\n}')
-        index.close()
-
-
-def get_index(name=None):
-    intialize_files()
-    index_dict = {}
-    with open(INDEXPATH, 'r') as index_file:
-        index_dict = json.load(index_file)
-        try:
-            return index_dict[name]
-        except KeyError:
-            return dict(index_dict)
-
-
 def write_index(dict: dict):
     with open(INDEXPATH, 'w') as index:
         json.dump(dict, index)
@@ -76,11 +93,11 @@ def recent_check(index):
         quit()
 
 
-def index_check(index, note_id, action):
+def index_check(index, note_id, move):
     try:
         return index[note_id]['path']
     except KeyError:
-        if action == 'move':
+        if move:
             print("Error: Cannot move a note that doesn't exist")
             quit()
         return
