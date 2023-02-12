@@ -1,4 +1,6 @@
 # tnote-cli
+**Disclamer: I can't say for certain this works as is but as far as I am aware it does**
+
 A simple notes Command line tool, because I really got tired of either:
 
 A. going from the terminal into another app to write something down for later
